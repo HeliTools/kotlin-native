@@ -51,7 +51,6 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val subprograms = mutableMapOf<FunctionDescriptor, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
-    var compilationModule: DICompileUnitRef? = null
     var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
 
     val llvmTypes = mapOf<KotlinType, LLVMTypeRef>(
@@ -110,15 +109,6 @@ internal fun generateDebugInfoHeader(context: Context) {
                 configurationMacro = "",
                 includePath        = "",
                 iSysRoot           = "")
-        context.debugInfo.compilationModule = DICreateCompilationUnit(
-                builder     = context.debugInfo.builder,
-                lang        = DwarfLanguage.DW_LANG_Kotlin.value,
-                File        = path.file,
-                dir         = path.folder,
-                producer    = DWARF.producer,
-                isOptimized = 0,
-                flags       = "",
-                rv          = DWARF.runtimeVersion)
         /* TODO: figure out what here 2 means:
          *
          * 0:b-backend-dwarf:minamoto@minamoto-osx(0)# cat /dev/null | clang -xc -S -emit-llvm -g -o - -
@@ -158,7 +148,8 @@ internal fun KotlinType.dwarfType(context:Context, targetData:LLVMTargetDataRef)
                 classDescriptor != null -> {
                     val type = DICreateStructType(
                             refBuilder    = context.debugInfo.builder,
-                            scope         = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                            // TODO: here should be DIFile as scope.
+                            scope         = null,
                             name          = "ObjHeader",
                             file          = null,
                             lineNumber    = 0,

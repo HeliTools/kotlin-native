@@ -1511,7 +1511,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             DICreateReplaceableCompositeType(
                     tag        = DwarfTag.DW_TAG_structure_type.value,
                     refBuilder = context.debugInfo.builder,
-                    refScope   = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                    refScope   = (currentCodeContext.fileScope() as FileScope)!!.file.file() as DIScopeOpaqueRef,
                     name       = clazz.descriptor.typeInfoSymbolName,
                     refFile    = file().file(),
                     line       = clazz.startLine()) as DITypeOpaqueRef
@@ -1733,7 +1733,18 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun IrFile.file(): DIFileRef {
         return context.debugInfo.files.getOrPut(this) {
             val path = this.fileEntry.name.toFileAndFolder()
-            DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
+            val file = DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
+            DICreateCompilationUnit(
+                    builder     = context.debugInfo.builder,
+                    lang        = DwarfLanguage.DW_LANG_Kotlin.value,
+                    File        = path.file,
+                    dir         = path.folder,
+                    producer    = DWARF.producer,
+                    isOptimized = 0,
+                    flags       = "",
+                    rv          = DWARF.runtimeVersion)
+            file
+
         }
     }
 
