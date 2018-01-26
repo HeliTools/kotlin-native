@@ -1765,7 +1765,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         @Suppress("UNCHECKED_CAST")
         val diFunction = DICreateFunction(
                 builder = context.debugInfo.builder,
-                scope = context.debugInfo.compilationModule as DIScopeOpaqueRef,
+                scope = (currentCodeContext.fileScope() as FileScope).file.file() as DIScopeOpaqueRef,
                 name = name,
                 linkageName = linkageName,
                 file = file().file(),
