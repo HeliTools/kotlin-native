@@ -107,6 +107,10 @@ const char* LLVMBuilderGetCurrentBbName(LLVMBuilderRef builder);
 const char *DIGetSubprogramLinkName(DISubprogramRef sp);
 LLVMValueRef LLVMBuilderGetCurrentFunction(LLVMBuilderRef builder);
 int DISubprogramDescribesFunction(DISubprogramRef sp, LLVMValueRef fn);
+/* for debug needs */
+int checkLocalVariable(DILocalVariableRef variable);
+DIScopeOpaqueRef parentScope(DIScopeOpaqueRef scopeRef);
+void dumpScopeType(DIScopeOpaqueRef scopeRef);
 //void DIScopeDump(DIScopeOpaqueRef scope);
 # ifdef __cplusplus
 }
