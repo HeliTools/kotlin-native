@@ -47,7 +47,7 @@ internal object DWARF {
 }
 
 internal class DebugInfo internal constructor(override val context: Context):ContextUtils {
-    val files = mutableMapOf<IrFile, DIFileRef>()
+    val files = mutableMapOf<String, DIFileRef>()
     val subprograms = mutableMapOf<FunctionDescriptor, DISubprogramRef>()
     var builder: DIBuilderRef? = null
     var module: DIModuleRef? = null
